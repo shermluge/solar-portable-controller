@@ -130,7 +130,7 @@ void setup()
       digitalWrite(outport_led,LOW);
       delay(600);
     }   
-    delay(250);
+    delay(150);
     denominator = resistor2 / (resistor1 + resistor2);
 }
 
