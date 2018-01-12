@@ -86,6 +86,7 @@ float minvoltage_led = 9.0; //cutoff for night light
 float minvoltage_panel = 2.5; // detect dark adjust for darkness
 float voltage_low = 12.4; //low voltage indicator 
 float voltage_critical =11.8 ; //crital voltage indicator,   +.3 volts due to it reads .3 volts low.
+float maxPwmVoltage = 16.2 //max you want to charge to. I've set lower then 16.8 for battery life
 
 unsigned long previousMillis = 0;
 unsigned long prevMillis = 0; //Previous millis for voltage indicator
@@ -220,7 +221,7 @@ void loop()
         Serial.print(" battery <= minvoltage_led or pvoltage < minvoltage_panel \n");
         #endif
       } 
-      if (pwmvoltage>16.2){
+      if (pwmvoltage>maxPwmVoltage){
         pwm_rate--;
         if (pwm_rate<5)pwm_rate=5;
       }else{
