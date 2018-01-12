@@ -131,7 +131,7 @@ void setup()
       delay(600);
     }   
     delay(250);
-    denominator = (float)resistor2 / (resistor1 + resistor2);
+    denominator = resistor2 / (resistor1 + resistor2);
 }
 
 void loop()
@@ -149,7 +149,7 @@ void loop()
     
   //Battery Section:    
     bvoltage = analogRead(inport_battery);
-    bvoltage = (float(bvoltage) / 1024.0) * Vcc; //Vcc
+    bvoltage = (bvoltage / 1024.0) * Vcc; //Vcc
     bvoltage = bvoltage / denominator;
     bvoltage = bvoltage - bvoltage_correction; //Change + or - depenting correction of voltage from meter
     
@@ -164,12 +164,12 @@ void loop()
     
   //Panel Section:
     pvoltage = analogRead(inport_panel);
-    pvoltage = (float(pvoltage) / 1024.0) * Vcc; //Vcc
+    pvoltage = (pvoltage / 1024.0) * Vcc; //Vcc
     pvoltage = pvoltage / denominator;
 
   //batter PWM LOAD Section:  (Possibly later )
     pwmvoltage = analogRead(inport_battery);
-    pwmvoltage = (float(pwmvoltage) / 1024.0) * Vcc; //Vcc
+    pwmvoltage = (pwmvoltage / 1024.0) * Vcc; //Vcc
     pwmvoltage = pwmvoltage / denominator;  
     
     #ifdef DEBUG
@@ -230,7 +230,7 @@ void loop()
       //pwm_rate=50;
     }
 
-    //Voltage indicator   added so it would only show voltage flash after designated time (saving power)
+    //Poor mans Voltage indicator   added so it would only show voltage flash after designated time (saving power)
     if (currentMillis - prevMillis >= hold_state_voltage_indicator) {
       prevMillis = currentMillis;
       //Indicator light to show voltage and decimal if above low voltage:
