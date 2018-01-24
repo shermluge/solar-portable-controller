@@ -327,6 +327,8 @@ void loop()
     }
 }
 
+
+/// Thanks to Scott Daniels @ https://provideyourown.com/2012/secret-arduino-voltmeter-measure-battery-voltage/
 long readVcc() {
   // Read 1.1V reference against AVcc
   // set the reference to Vcc and the measurement to the internal 1.1V reference
