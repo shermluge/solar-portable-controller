@@ -86,7 +86,6 @@ float minvoltage_led = 9.0; //cutoff for night light
 float minvoltage_panel = 2.5; // detect dark adjust for darkness
 float voltage_low = 12.4; //low voltage indicator 
 float voltage_critical =11.8 ; //crital voltage indicator,   +.3 volts due to it reads .3 volts low.
-float maxPwmVoltage = 16.2 //max you want to charge to. I've set lower then 16.8 for battery life
 
 unsigned long previousMillis = 0;
 unsigned long prevMillis = 0; //Previous millis for voltage indicator
@@ -131,8 +130,8 @@ void setup()
       digitalWrite(outport_led,LOW);
       delay(600);
     }   
-    delay(150);
-    denominator = resistor2 / (resistor1 + resistor2);
+    delay(250);
+    denominator = (float)resistor2 / (resistor1 + resistor2);
 }
 
 void loop()
@@ -150,7 +149,7 @@ void loop()
     
   //Battery Section:    
     bvoltage = analogRead(inport_battery);
-    bvoltage = (bvoltage / 1024.0) * Vcc; //Vcc
+    bvoltage = (float(bvoltage) / 1024.0) * Vcc; //Vcc
     bvoltage = bvoltage / denominator;
     bvoltage = bvoltage - bvoltage_correction; //Change + or - depenting correction of voltage from meter
     
@@ -165,12 +164,12 @@ void loop()
     
   //Panel Section:
     pvoltage = analogRead(inport_panel);
-    pvoltage = (pvoltage / 1024.0) * Vcc; //Vcc
+    pvoltage = (float(pvoltage) / 1024.0) * Vcc; //Vcc
     pvoltage = pvoltage / denominator;
 
   //batter PWM LOAD Section:  (Possibly later )
     pwmvoltage = analogRead(inport_battery);
-    pwmvoltage = (pwmvoltage / 1024.0) * Vcc; //Vcc
+    pwmvoltage = (float(pwmvoltage) / 1024.0) * Vcc; //Vcc
     pwmvoltage = pwmvoltage / denominator;  
     
     #ifdef DEBUG
@@ -221,7 +220,7 @@ void loop()
         Serial.print(" battery <= minvoltage_led or pvoltage < minvoltage_panel \n");
         #endif
       } 
-      if (pwmvoltage>maxPwmVoltage){
+      if (pwmvoltage>16.2){
         pwm_rate--;
         if (pwm_rate<5)pwm_rate=5;
       }else{
@@ -231,7 +230,7 @@ void loop()
       //pwm_rate=50;
     }
 
-    //Poor mans Voltage indicator   added so it would only show voltage flash after designated time (saving power)
+    //Voltage indicator   added so it would only show voltage flash after designated time (saving power)
     if (currentMillis - prevMillis >= hold_state_voltage_indicator) {
       prevMillis = currentMillis;
       //Indicator light to show voltage and decimal if above low voltage:
@@ -304,18 +303,12 @@ void loop()
       }
       
       if (bvoltage < voltage_critical){
-        digitalWrite(outport_led_voltage_indicator,HIGH);
-        delay(120); //flash quickly for critical low voltage.
-        digitalWrite(outport_led_voltage_indicator,LOW);
-        delay(120); //flash quickly for critical low voltage.
-        digitalWrite(outport_led_voltage_indicator,HIGH);
-        delay(820); //flash quickly for critical low voltage.
-        digitalWrite(outport_led_voltage_indicator,LOW);
-        delay(520); //flash quickly for critical low voltage.
-        digitalWrite(outport_led_voltage_indicator,HIGH);
-        delay(120); //flash quickly for critical low voltage.
-        digitalWrite(outport_led_voltage_indicator,LOW);
-        delay(120); //flash quickly for critical low voltage.  
+        for(int i = 0;i<3;i++){
+          digitalWrite(outport_led_voltage_indicator,HIGH);
+          delay(120); //flash quickly for critical low voltage.
+          digitalWrite(outport_led_voltage_indicator,LOW);
+          delay(120); //flash quickly for critical low voltage.
+        }
         critical_low = HIGH;  //put critical low state on
         critical_low_count = 0;        
         #ifdef DEBUG
@@ -327,8 +320,6 @@ void loop()
     }
 }
 
-
-/// Thanks to Scott Daniels @ https://provideyourown.com/2012/secret-arduino-voltmeter-measure-battery-voltage/
 long readVcc() {
   // Read 1.1V reference against AVcc
   // set the reference to Vcc and the measurement to the internal 1.1V reference
